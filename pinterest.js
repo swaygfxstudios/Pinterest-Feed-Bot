@@ -57,6 +57,7 @@ export async function getLatestPin() {
     const cleanDescription =
       rawDescription
         .replace(/<[^>]*>/g, "")
+        .replace(/\d{1,2}\s+\S+\s+\d{4}\s*г\.\s*[-–—]*/i, "")
         .replace(/\s+/g, " ")
         .trim();
 
