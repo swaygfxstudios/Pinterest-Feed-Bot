@@ -1,6 +1,6 @@
 export default {
   pinterest: {
-    feedUrl: "PASTE_YOUR_RSS_APP_PINTEREST_FEED_HERE"
+    feedUrl: "https://rss.app/feeds/yGIDuNzKobBmccK8.xml "
   },
 
   discord: {
