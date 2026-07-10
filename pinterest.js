@@ -4,6 +4,7 @@ import config from "./config.js";
 
 export async function getLatestPin() {
   try {
+
     const response = await axios.get(
       config.pinterest.feedUrl
     );
@@ -14,49 +15,87 @@ export async function getLatestPin() {
 
     const feed = parser.parse(response.data);
 
-    const items = feed.rss?.channel?.item;
+    const items =
+      feed.rss?.channel?.item;
+
 
     if (!items) {
       console.log("No Pinterest pins found.");
       return null;
     }
 
+
     const item = Array.isArray(items)
       ? items[0]
       : items;
+
 
     const link =
       typeof item.link === "object"
         ? item.link["#text"]
         : item.link;
 
+
+    const rawDescription =
+      item.description || "";
+
+
+    // Extract Pinterest image from HTML
+    const imageMatch =
+      rawDescription.match(
+        /<img[^>]+src="([^"]+)"/
+      );
+
+
+    const image =
+      imageMatch
+        ? imageMatch[1]
+        : null;
+
+
+    // Remove HTML tags
+    const cleanDescription =
+      rawDescription
+        .replace(/<[^>]*>/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+
+
     return {
+
       id: link,
 
       title:
-        item.title || "New Pinterest Pin",
+        item.title ||
+        "New Pinterest Pin",
+
 
       description:
-        item.description || "",
+        cleanDescription,
+
 
       link: link,
 
-      image:
-        item.enclosure?.["@_url"] ||
-        item["media:content"]?.["@_url"] ||
-        null,
+
+      image: image,
+
 
       published:
         item.pubDate || null
+
     };
 
-  } catch (error) {
+
+  } catch(error) {
 
     console.error(
       "Pinterest RSS Error:",
       error.message
     );
 
+
     return null;
+
   }
 }
